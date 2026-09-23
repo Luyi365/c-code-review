@@ -22,18 +22,18 @@
 - 语法结构采用「名词/形容词 + 名词」的结构，如`UserInfo`；
 - 仅源文件内部使用则纯`struct`形式即可，若对外暴露则头文件前置声明`typedef`类型；
 - 使用`typedef`定义的新类型后缀加`_t`；
-- 枚举类型成员前缀加`结构体名_`，如`UserInfo_BaseID`；
+- 枚举成员使用枚举类型名作为前缀，如`UserStatus_BaseID`；
 - 如果遇到业内惯例的缩写词，其大写更能反映单词整体性，则使用全大写的形式，如使用`ID`而非`Id`；
 - 下面是对不同结构体类型的命名示例：
     ```c
-    typedef struct UserInfo UserInfo_t;         // 结构体前置声明
-    typedef struct UserInfo {      //: 结构体
-    } UserInfo_t, *UserInfo_t, **UserInfo_t;    // 尽量避免在结构体类型声明时声明指针类型
-    typedef union UserInfo {       //: 联合体
-    } UserInfo_t;   
-    typedef enum UserInfo {        //: 枚举体
-        UserInfo_BaseID,
-    } UserInfo_t;  
+    typedef struct UserInfo UserInfo_t; // 结构体前置声明
+    struct UserInfo {                   // 结构体
+    } UserInfo_t, *UserInfo_t, **UserInfo_t;    // 尽量避免在结构体类型声明时声明指针类型;
+    typedef union UserData {            // 联合体
+    } UserData_t;
+    typedef enum UserStatus {           // 枚举体
+        UserStatus_BaseID,
+    } UserStatus_t;
     ```
 
 ### 函数
@@ -43,20 +43,20 @@
 - 特殊函数命名作为例外：句柄注册接口函数（元方法）使用`_id_do_thing_sub()`且只能为`static`；寄存器操作函数使用`_id_do_register()`；汇编转C语言的操作函数使用`__asm_do_thing()`；
 - 下面是对不同函数类型的命名示例：
     ```c
-    void id_do_thing_sub(buf, len)  //: 函数（形参采用截断式缩写）
+    void id_do_thing_sub(buf, len)       //: 函数（形参采用截断式缩写）
     {
     }
-    static void id_do_thing_sub()   //: 静态函数
+    static void id_do_thing_sub()        //: 静态函数
     {
     }
-    inline void id_do_thing_sub() { //: 内联函数
+    inline void id_do_thing_sub() {      //: 内联函数
     }
-    static int _id_do_thing_sub() { //: 句柄注册的接口函数（元方法），只能是static类型
+    static int _id_do_thing_sub() {      //: 句柄注册的接口函数（元方法），只能是static类型
     }
-    void _id_do_register()          //: 操作寄存器函数
+    void _id_do_register()               //: 操作寄存器函数
     {
     }
-    void __asm_do_thing()           //: 汇编转成 C 语言的操作函数
+    void __asm_do_thing()                //: 汇编转成 C 语言的操作函数
     {
     }
     ```
@@ -87,7 +87,7 @@
 
 ### 缩进
 
-- 整体遵循4空格为单位缩进，严禁使用制表符(tab)；
+- 整体遵循4空格为单位缩进，严禁使用制表符(tab)；本条适用于C源码，以制表符为语法要求的文件（如`Makefile`的命令行）不在此列；
 - 大括号位置按语句特性区分：`if`/`else`/`for`/`while()`/`do` 采用同行`{`，`switch` 与 `while(1)` 采用换行`{`；
 - 函数体大括号按函数特性区分：普通函数换行`{`，`inline` 内联函数与句柄注册接口函数（元方法）同行`{`（见函数示例）；
 - 下面是对标准逻辑类型的缩进示例：
@@ -125,6 +125,9 @@
     ```
 
 ### 注释
+
+> 本节只规定注释的语法形式与使用场景，不规定注释的书写语言与内容取舍。
+> 下列示例中的`Brief description.`等英文是占位文本，仅用于说明标签位置。
 
 - `/** ... */`：主推的 Doxygen 块式注释，用于文件头文档注释和函数头注释（.h 与 .c 统一使用），示例：
     ```c
