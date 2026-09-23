@@ -1,20 +1,37 @@
 ---
 # 仅映射 c-style.md 中 clang-format 可以确定执行的格式规则。
+# 规范冲突时一律以 c-style.md 为准；本文件不得引入规范未规定的约束。
+# clang-format 无法完整表达 switch/while(1) 的换行大括号、inline/元方法的同行大括号、
+# 仅逻辑判断符置前及“所有 case 均为单行”的整体条件；涉及这些规则时需人工复核或局部禁用格式化。
 BasedOnStyle: LLVM
 Language: Cpp
+
+# 缩进：4 空格，严禁制表符
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-PointerAlignment: Right
-SpaceBeforeParens: Never
+
+# c-style.md 未规定行宽，因此关闭自动折行，避免引入 LLVM 继承的 80 列限制
+ColumnLimit: 0
+
+# case 单行规则只能近似映射；clang-format 无法表达“所有 case 都仅占一行”的整体前提
+AllowShortCaseLabelsOnASingleLine: true
 IndentCaseLabels: true
+
+# 大括号位置：普通函数换行 `{`；if/for/while()/do 同行 `{`；else 另起一行
+# 注意：switch 与 while(1) 规范要求换行 `{`，clang-format 无法与其他控制语句区分，
+#       会被改成同行。含这两种写法的文件不要直接套用本配置，详见 SKILL.md。
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterFunction: true
   AfterControlStatement: false
-  BeforeElse: false
+  BeforeElse: true
+
 AllowShortBlocksOnASingleLine: Never
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
+
+PointerAlignment: Right
+SpaceBeforeParens: Never
 ReflowComments: false
 SortIncludes: Never
